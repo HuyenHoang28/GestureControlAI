@@ -1,32 +1,36 @@
-Hand Gesture Recognition (MediaPipe + scikit-learn)
-====================================================
+# Hand Gesture Recognition Project
+# Dự án Nhận diện Cử chỉ Tay
 
-This project captures hand landmarks using MediaPipe and trains a lightweight scikit-learn classifier (RandomForest) to recognize gestures in real-time.
+---
 
-Quick steps:
-1. Collect data for each gesture:
-   python src/collect_dataset.py --label gesture_0 --out data/landmarks.csv
-   (Repeat for gesture_1 ... gesture_5 and append to same CSV)
+## 1. Giới thiệu / Introduction
 
-2. Train model:
-   python src/train_model.py --in data/landmarks.csv --out models/gesture_clf.joblib
+Dự án sử dụng AI để nhận diện sáu cử chỉ tay cơ bản  từ webcam theo thời gian thực.  
+ 
+This project uses AI to recognize six basic hand gestures from a webcam in real-time.  
 
-3. Run real-time detection:
-   python src/detect_gesture.py --model models/gesture_clf.joblib
+---
 
-Controls:
-- collect_dataset: press 's' to save sample, 'q' to quit
-- detect_gesture: press 'q' to quit
+## 2. Yêu cầu / Requirements
 
-Requirements:
-- Python 3.9 recommended
-- Install dependencies: pip install -r requirements.txt
+- Python 3.9  
+- Thư viện Python:
+  + OpenCV
+  + Mediapipe
+  + scikit-learn
+  + numpy
+  + joblib
+  + ipywidgets
 
+Cài đặt thư viện / Install required libaries: pip install -r requirements.txt
 
-STT	Tên label (dùng trong code)	Mô tả cử chỉ	Gợi ý khi thu mẫu
-1️⃣	thumbs_up	👍 Ngón cái giơ lên (like)	Tay hướng về camera, ngón cái lên rõ
-2️⃣	thumbs_down	👎 Ngón cái chỉ xuống	Giống like nhưng xoay ngược tay
-3️⃣	fist	✊ Nắm tay lại	Giữ bàn tay nắm chặt, không duỗi ngón
-4️⃣	open_hand	🖐️ Bàn tay mở, các ngón duỗi	Tay mở thẳng, lòng bàn tay hướng vào camera
-5️⃣	peace	✌️ Giơ 2 ngón (index + middle)	Hai ngón tách nhau, hướng về camera
-6️⃣	okay	👌 Ngón cái và ngón trỏ chạm nhau thành vòng tròn	Giữ ổn định, camera thấy rõ hình tròn
+## 3. Hướng dẫn sử dụng / Instructions
+
+ - Bước 1: Cài các thư viện (có thể dùng lệnh trên trong terminal).
+ - Bước 2: Mở file Project_report_G15.ipynb
+ - Bước 3: Đến mục 3. Tiến độ giữa kỳ (W8) / 4. Cập nhật kết quả cuối kỳ (W15), chạy (execute) cell code mục "Chương trình" trước và đợi cell chạy xong.
+ - Bước 4: Nếu muốn thu thập mẫu data cho các label cử chỉ(có sẵn, hoặc viết thêm vào trong label list), bấm chạy cell có comment "COLLECT DATA MODE" ở đầu, chọn label cử chỉ lấy mẫu, sau đó chọn "Bắt đầu collect" và thực hiện lấy mẫu:
+   + SPACE: chụp ảnh lấy mẫu
+   + q: thoát quá trình lấy mẫu
+ - Bước 5: Sau khi lấy mẫu các label xong, chạy cell có comment "TRAIN MODE" để huấn luyện mô hình. Kết quả huấn luyện sẽ hiển thị ngay bên dưới cell
+ - Bước 6: Sau khi huấn luyện model, chạy cell có comment "PREDICT MODE" để chạy mô hình đã huấn luyện, kiểm tra xem mô hình đã được huấn luyện đúng chưa. Ấn q để thoát.
