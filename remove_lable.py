@@ -6,7 +6,7 @@ BACKUP_PATH = "landmarks_backup.npy"
 
 # Nhập tên label muốn xóa (ví dụ: "A")
 
-label_to_remove = "1_fist"
+label_to_remove = "2_peace"
 
 # Tạo bản sao lưu trước khi xóa
 shutil.copy(DATASET_PATH, BACKUP_PATH)
