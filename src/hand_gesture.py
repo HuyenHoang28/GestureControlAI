@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -7,6 +8,21 @@ import joblib
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+# === VIETNAMESE TEXT SUPPORT (using Pillow) ===
+from PIL import ImageFont, ImageDraw, Image
+
+def draw_text_vi(img, text, pos, font_path="Roboto-Regular.ttf", font_size=32, color=(0,255,0)):
+    """Draw Vietnamese text on an OpenCV image using Pillow."""
+    img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(img_pil)
+    try:
+        font = ImageFont.truetype(font_path, font_size)
+    except OSError:
+        font = ImageFont.load_default()
+    draw.text(pos, text, font=font, fill=color)
+    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+# ==============================================
 
 DATASET_PATH = "landmarks.npy"     
 MODEL_PATH   = "knn_model.joblib"
@@ -30,7 +46,7 @@ def extract_hand_landmarks(results):
             coords /= max_dist
         all_coords.append(coords.flatten())
 
-    # nếu chỉ có 1 tay thì thêm vector 0 cho tay còn lại
+    # if only one hand, add zero vector for the other
     if len(all_coords) == 1:
         all_coords.append(np.zeros_like(all_coords[0]))
 
@@ -75,12 +91,12 @@ def collect(label):
                     cv2.putText(img, label_h, (x - 20, y - 20),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
 
-            cv2.putText(img, f"Label: {label}", (10,30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
-            cv2.putText(img, "Space: save sample  |  q: quit", (10,60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,0), 1)
-            cv2.imshow("Collect gestures", img)
+            # --- Vietnamese text drawn with Pillow ---
+            img = draw_text_vi(img, f"Label: {label}", (10, 20))
+            img = draw_text_vi(img, "Space: save sample  |  q: quit", (10, 60), font_size=26, color=(255,255,0))
+            # ------------------------------------------
 
+            cv2.imshow("Collect gestures", img)
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 break
@@ -155,12 +171,6 @@ def predict():
             if results.multi_hand_landmarks:
                 for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
                     mp_drawing.draw_landmarks(img, hand_landmarks, mp_hands_connections)
-                    label_h = handedness.classification[0].label
-                    coords = hand_landmarks.landmark[0]
-                    h, w, _ = img.shape
-                    x, y = int(coords.x * w), int(coords.y * h)
-                    cv2.putText(img, label_h, (x - 20, y - 20),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
 
                 vec = extract_hand_landmarks(results)
                 if vec is not None:
@@ -172,13 +182,13 @@ def predict():
                         prob_text = f"{conf*100:.1f}%"
                     label_text = idx2label[int(pred_idx)]
 
-            cv2.putText(img, f"Gesture: {label_text}", (10,30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
+            # --- Draw Vietnamese text with Pillow ---
+            img = draw_text_vi(img, f"Gesture: {label_text}", (10, 20), color=(0,255,0))
             if prob_text:
-                cv2.putText(img, f"Conf: {prob_text}", (10,65),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,200,255), 2)
-            cv2.imshow("Hand Gesture Recognition", img)
+                img = draw_text_vi(img, f"Confidence: {prob_text}", (10, 60), color=(0,200,255))
+            # ----------------------------------------
 
+            cv2.imshow("Hand Gesture Recognition", img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     cap.release()
