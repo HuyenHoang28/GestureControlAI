@@ -34,3 +34,9 @@ Cài đặt thư viện / Install required libaries: pip install -r requirements
    + q: thoát quá trình lấy mẫu
  - Bước 5: Sau khi lấy mẫu các label xong, chạy cell có comment "TRAIN MODE" để huấn luyện mô hình. Kết quả huấn luyện sẽ hiển thị ngay bên dưới cell
  - Bước 6: Sau khi huấn luyện model, chạy cell có comment "PREDICT MODE" để chạy mô hình đã huấn luyện, kiểm tra xem mô hình đã được huấn luyện đúng chưa. Ấn q để thoát.
+
+ Hàm tính khoảng cách:
+
+ + Manhattan (p = 1): d = np.sum(np.abs(self.X - x), axis=1)
+ + Euclid (p = 2): d = np.sqrt(np.sum((self.X - x) ** 2, axis=1))
+ + Chebyshev (p = oo): d = np.max(np.abs(self.X - x), axis=1)
